@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { Text, View, StyleSheet, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MovieItem from '../components/movies/MovieItem';
 import type { Movie } from '../types/app';
@@ -23,7 +23,9 @@ export default function Favorite(): JSX.Element {
   };
 
   const renderItem = ({ item }: { item: Movie }) => (
-    <MovieItem movie={item} size={{ width: '48%', height: 250, marginBottom: 16 }} coverType="poster" />
+    <View style={styles.movieItemContainer}>
+      <MovieItem movie={item} size={{ width: '100%', height: 130, marginBottom: 16 }} coverType="poster" />
+    </View>
   );
 
   return (
@@ -35,6 +37,7 @@ export default function Favorite(): JSX.Element {
           keyExtractor={(item) => item.id.toString()}
           horizontal={false}
           numColumns={2}
+          contentContainerStyle={styles.flatListContainer}
         />
       ) : (
         <Text style={styles.noFavoritesText}>No favorite movies yet.</Text>
@@ -54,9 +57,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 32,
   },
-  movieItem: {
-    width: '48%',
-    height: 250,
-    marginBottom: 16,
+  flatListContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+  },
+  movieItemContainer: {
+    flex: 1,
+    paddingHorizontal: 8,
   },
 });

@@ -4,16 +4,14 @@ import {
  Text,
  StyleSheet,
  View,
- TouchableOpacity, // Ditambahkan
+ TouchableOpacity,
 } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import type { MovieItemProps } from '../../types/app'
-import { StackActions } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 
 const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
- // Tambahkan code di bawah
  const navigation = useNavigation()
  const pushAction = StackActions.push('MovieDetail', { id: movie.id })
   return (

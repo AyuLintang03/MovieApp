@@ -4,10 +4,15 @@ import { API_ACCESS_TOKEN } from '@env';
 import MovieList from '../components/movies/MovieList';
 import type { Movie } from '../types/app';
 import { LinearGradient } from 'expo-linear-gradient';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RootStackParamList } from '../navigations/HomeStackNavigation';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FavoriteStackParamList } from '../navigations/FavoriteStackNavigation';
 
-const MovieDetail = ({ route }: any): JSX.Element => {
+type MovieDetailScreenProps = NativeStackScreenProps<RootStackParamList | FavoriteStackParamList, 'MovieDetail'>;
+
+const MovieDetail = ({ route }: MovieDetailScreenProps): JSX.Element => {
   const { id } = route.params;
   const [movie, setMovie] = useState<Movie | null>(null);
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
@@ -16,8 +21,11 @@ const MovieDetail = ({ route }: any): JSX.Element => {
 
   useEffect(() => {
     getMovieData();
-    checkFavorite();
   }, [id]);
+
+  useEffect(() => {
+    checkFavorite();
+  }, [movie]);
 
   const getMovieData = async () => {
     try {
@@ -50,7 +58,9 @@ const MovieDetail = ({ route }: any): JSX.Element => {
     try {
       const favoritesData = await AsyncStorage.getItem('@FavoriteList');
       const favorites: Movie[] = favoritesData ? JSON.parse(favoritesData) : [];
-      setIsFavorite(favorites.some((fav) => fav.id === movie?.id));
+      if (movie) {
+        setIsFavorite(favorites.some((fav) => fav.id === movie.id));
+      }
     } catch (error) {
       console.log(error);
     }
@@ -71,11 +81,11 @@ const MovieDetail = ({ route }: any): JSX.Element => {
 
       await AsyncStorage.setItem('@FavoriteList', JSON.stringify(favorites));
       setIsFavorite(!isFavorite);
+      checkFavorite(); // Panggil checkFavorite() setelah mengubah daftar favorit
     } catch (error) {
       console.log(error);
     }
   };
-
   return (
     <ScrollView style={styles.container}>
       {loading ? (
@@ -95,11 +105,15 @@ const MovieDetail = ({ route }: any): JSX.Element => {
             >
               <Text style={styles.title}>{movie.title}</Text>
               <View style={styles.ratingContainer}>
-                <FontAwesome name="star" size={20} color="yellow" />
+                <FontAwesome5 name="star" size={20} color="yellow" solid />
                 <Text style={styles.rating}>{movie.vote_average.toFixed(1)}</Text>
               </View>
               <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteIcon}>
-                <FontAwesome name={isFavorite ? 'heart' : 'heart-o'} size={24} color="red" />
+                {isFavorite ? (
+                  <FontAwesome5 name="heart" size={24} color="red" solid />
+                ) : (
+                  <FontAwesome5 name="heart" size={24} color="red" regular />
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </ImageBackground>

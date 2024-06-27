@@ -1,24 +1,25 @@
-import React from 'react'
+import React from 'react';
 import {
- ImageBackground,
- Text,
- StyleSheet,
- View,
- TouchableOpacity,
-} from 'react-native'
-import { FontAwesome } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
-import type { MovieItemProps } from '../../types/app'
-import { StackActions, useNavigation } from '@react-navigation/native';
+  ImageBackground,
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import type { MovieItemProps } from '../../types/app';
+import { useNavigation } from '@react-navigation/native';
 
 const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
- const navigation = useNavigation()
- const pushAction = StackActions.push('MovieDetail', { id: movie.id })
+  const navigation = useNavigation();
+
+  const handleMoviePress = () => {
+    navigation.navigate('MovieDetail', { id: movie.id });
+  };
+
   return (
-    <TouchableOpacity  
-        onPress={() => {
-        navigation.dispatch(pushAction)
-     }}>
+    <TouchableOpacity onPress={handleMoviePress}>
       <ImageBackground
         resizeMode="cover"
         style={[size, styles.backgroundImage]}
@@ -36,14 +37,14 @@ const MovieItem = ({ movie, size, coverType }: MovieItemProps): JSX.Element => {
         >
           <Text style={styles.movieTitle}>{movie.title}</Text>
           <View style={styles.ratingContainer}>
-            <FontAwesome name="star" size={16} color="yellow" />
+            <FontAwesome5 name="star" size={16} color="yellow" solid />
             <Text style={styles.rating}>{movie.vote_average.toFixed(1)}</Text>
           </View>
         </LinearGradient>
       </ImageBackground>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -72,6 +73,6 @@ const styles = StyleSheet.create({
     color: 'yellow',
     fontWeight: '700',
   },
-})
+});
 
-export default MovieItem
+export default MovieItem;

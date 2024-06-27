@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, FlatList } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MovieItem from '../components/movies/MovieItem';
 import type { Movie } from '../types/app';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FavoriteStackParamList } from '../navigations/FavoriteStackNavigation';
 
-export default function Favorite(): JSX.Element {
+type FavoriteScreenNavigationProp = NativeStackNavigationProp<FavoriteStackParamList, 'Favorite'>;
+
+const Favorite = (): JSX.Element => {
   const [favorites, setFavorites] = useState<Movie[]>([]);
+  const navigation = useNavigation<FavoriteScreenNavigationProp>();
 
   useEffect(() => {
     loadFavorites();
@@ -22,10 +28,14 @@ export default function Favorite(): JSX.Element {
     }
   };
 
+  const handleMoviePress = (id: number) => {
+    navigation.navigate('MovieDetail', { id });
+  };
+
   const renderItem = ({ item }: { item: Movie }) => (
-    <View style={styles.movieItemContainer}>
+    <TouchableOpacity onPress={() => handleMoviePress(item.id)} style={styles.movieItemContainer}>
       <MovieItem movie={item} size={{ width: '100%', height: 130, marginBottom: 16 }} coverType="poster" />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -44,7 +54,7 @@ export default function Favorite(): JSX.Element {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -66,3 +76,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 });
+
+export default Favorite;
